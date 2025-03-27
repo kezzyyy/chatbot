@@ -21,11 +21,14 @@ export const POST: RequestHandler = async ({ request }) => {
     try {
         console.log("Received POST request");
 
-        const { chat } = await request.json();  
-        console.log("Parsed chat data:", chat);
+        const body = await request.json();
+        console.log("Full Request Body:", body);
 
-        if (!chat) {
-            console.error("Chat is empty or undefined");
+        const message = body?.Chat;
+        console.log("Extracted message:", message);
+
+        if (!message) {
+            console.error("No message received!");
             return json({ error: "No chat data provided" }, { status: 400 });
         }
 
@@ -34,23 +37,31 @@ export const POST: RequestHandler = async ({ request }) => {
             likes: ["Online Games", "Anime", "Beach", "Long Walk", "Cold weather", "Thunder Storm", "Dogs", "Cats"],
             hobbies: ["Outdoor Activities", "Listening to Music", "Online Games", "Watching Anime"],
             personal: ["22yrs old", "Lives in Mangan-Vaca Subic Zambales", "Birthday is at March 24, 2003"],
-            education:["Went to Subic Ecumenical Learning Center for Elementary", "for Highschool I went to Subic National High School (SPA)", "Currently in College at Gordon COllege"],
+            education: [
+                "Went to Subic Ecumenical Learning Center for Elementary",
+                "For Highschool I went to Subic National High School (SPA)",
+                "Currently in College at Gordon College"
+            ],
             userType: "Master User",
         };
 
-        console.log("User data:", user);  
+        console.log("User data:", user);
 
         const response = await ollama.chat({
             ...ollamaConfig,
             messages: [
                 {
                     role: "system",
-                    content: `User's chat: ${chat}. Here is the user's profile: ${JSON.stringify(user)}`,
+                    content: `User's profile: ${JSON.stringify(user)}`,
                 },
+                {
+                    role: "user",
+                    content: message
+                }
             ],
         });
 
-        console.log("Full Ollama response:", JSON.stringify(response, null, 2));
+        console.log("Ollama Response:", JSON.stringify(response, null, 2));
 
         if (!response || !response.message) {
             console.error("Invalid response from Ollama");
@@ -65,7 +76,7 @@ export const POST: RequestHandler = async ({ request }) => {
         });
 
     } catch (error) {
-        console.error("Error in backend:", error);
+        console.error("Backend error:", error);
 
         return json({
             error: "Backend error",
