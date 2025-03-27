@@ -34,6 +34,7 @@ export const POST: RequestHandler = async ({ request }) => {
             likes: ["Online Games", "Anime", "Beach", "Long Walk", "Cold weather", "Thunder Storm", "Dogs", "Cats"],
             hobbies: ["Outdoor Activities", "Listening to Music", "Online Games", "Watching Anime"],
             personal: ["22yrs old", "Lives in Mangan-Vaca Subic Zambales", "Birthday is at March 24, 2003"],
+            education:["Went to Subic Ecumenical Learning Center for Elementary", "for Highschool I went to Subic National High School (SPA)", "Currently in College at Gordon COllege"],
             userType: "Master User",
         };
 
