@@ -30,8 +30,9 @@
       const apiResponse = await request.json();
       let aiResponse = apiResponse?.message || 'No response from AI.';
 
-      aiResponse = aiResponse.replace(/<think>.*?<\/think>/gs, '').trim();
-      aiResponse = aiResponse.split('.')[0] + '.'; 
+      // Fixed regex issue
+      aiResponse = aiResponse.replace(/<think>([\s\S]*?)<\/think>/g, '').trim();
+      aiResponse = aiResponse.split('.')[0] + '.';
 
       chatHistory.update(history => [...history, { sender: 'ai', message: aiResponse }]);
     } catch (err) {
@@ -58,12 +59,13 @@
     </div>
 
     <div class="md:w-1/2 w-full space-y-4 p-4">
-      <textarea 
+      <input 
+        type="text"
         bind:value={userQuery} 
         placeholder="Type your question..." 
-        class="w-full h-24 resize-none rounded-md border border-blue-400 p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-300 placeholder-blue-400 bg-white/80 shadow-md"
-        on:keydown={(e) => e.key === 'Enter' && !e.shiftKey && sendQuery()}
-      ></textarea>
+        class="w-full rounded-md border border-blue-400 p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-300 placeholder-blue-400 bg-white/80 shadow-md"
+        on:keydown={(e) => e.key === 'Enter' && sendQuery()}
+      />
       
       <button 
         on:click={sendQuery}
